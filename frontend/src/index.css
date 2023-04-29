@@ -74,3 +74,34 @@ code {
 .ant-input::placeholder {
   color: #5f6783 !important;
 }
+
+.ant-modal {
+  border: 1px solid #363e54;
+  width: 400px !important;
+  border-radius: 10px;
+}
+
+.ant-modal-header {
+  background-color: #0e111b !important;
+}
+
+.ant-modal-content {
+  background-color: #0e111b !important;
+  color: white !important;
+  padding: 0px !important;
+}
+
+.ant-modal-title {
+  color: white !important;
+  padding-top: 17px !important;
+  margin-left: 20px !important;
+}
+
+.ant-modal-close-icon {
+  color: #363e54 !important;
+  transition: 0.3s;
+}
+
+.ant-modal-close-icon:hover {
+  color: white !important;
+}

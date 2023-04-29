@@ -10,6 +10,7 @@ function Swap() {
     const [tokenOne, setTokenOne] = useState(tokenList[0]);
     const [tokenTwo, setTokenTwo] = useState(tokenList[1]);
     const [isOpen, setIsOpen] = useState(false);
+    const [selectedAsset, setSelectedAsset] = useState(null);
 
     const handleSlippageChange = (e) => {
         setSlippage(e.target.value);
@@ -41,18 +42,46 @@ function Swap() {
     }
 
     const openModal = (token) => {
+        setSelectedAsset(token);
         setIsOpen(true);
+    }
+
+    const changeToken = (token) => {
+        if (selectedAsset == 1) {
+            if (token == tokenTwo)
+                setTokenTwo(tokenOne);
+            setTokenOne(token);
+        } else {
+            if (token == tokenOne)
+                setTokenOne(tokenTwo);
+            setTokenTwo(token);
+        }
+        setIsOpen(false);
     }
 
     return (
         <>
             <Modal
                 open={isOpen}
-                // onCancel={setIsOpen(false)}
                 onCancel={() => setIsOpen(false)}
                 footer={null}
-                title="Select a"
+                title="Select a token"
             >
+                <div className="modalContent">
+                    {tokenList?.map((e, i) => {
+                        if (selectedAsset.ticker != e.ticker)
+                            return (
+                                <div key={i} className="tokenChoice" onClick={() => changeToken(e)}>
+                                    <img src={e.img} className="tokenLogo" />
+                                    <div>
+                                        <div className="tokenName">{e.name}</div>
+                                        <div className="tokenTicker" >{e.ticker}</div>
+                                    </div>
+                                </div>
+                            );
+                    })}
+
+                </div>
 
             </Modal>
             <div className="tradeBox">
@@ -73,17 +102,18 @@ function Swap() {
                     <div className="switchButton" onClick={switchToken}>
                         <ArrowDownOutlined className="switchArrow" />
                     </div>
-                    <div className="asset assetOne" onClick={() => openModal(tokenOne)}>
+                    <div className="asset assetOne" onClick={() => openModal(1)}>
                         <img src={tokenOne.img} className="assetLogo" />
                         {tokenOne.ticker}
                         <DownOutlined />
                     </div>
-                    <div className="asset assetTwo">
+                    <div className="asset assetTwo" onClick={() => openModal(2)}>
                         <img src={tokenTwo.img} className="assetLogo" />
                         {tokenTwo.ticker}
                         <DownOutlined />
                     </div>
                 </div>
+                <div className="swapButton" disabled={tokenOneAmount <= 0}>Swap</div>
             </div>
         </>
     )
