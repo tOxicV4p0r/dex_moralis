@@ -11,7 +11,22 @@ function Swap() {
     const [tokenOne, setTokenOne] = useState(tokenList[0]);
     const [tokenTwo, setTokenTwo] = useState(tokenList[1]);
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedAsset, setSelectedAsset] = useState(null);
+    const [selectedAsset, setSelectedAsset] = useState(tokenOne);
+    const [assetChanged, setAssetChanged] = useState(null);
+    const [priceFeed, setPriceFeed] = useState(null);
+
+    useEffect(() => {
+        fetchPrice(tokenOne.address, tokenTwo.address);
+    }, [tokenOne, tokenTwo])
+
+    const fetchPrice = async (addressone, addresstwo) => {
+        const res = await axios.get('http://localhost:3001/tokenprice', {
+            params: { addressone, addresstwo }
+        })
+
+        console.log(res.data);
+        setPriceFeed(res.data);
+    }
 
     const handleSlippageChange = (e) => {
         setSlippage(e.target.value);
@@ -19,12 +34,18 @@ function Swap() {
 
     const changeAmount = (e) => {
         setTokenOneAmount(e.target.value);
-        setTokenTwoAmount(e.target.value);
+        if (e.target.value && priceFeed) {
+            const { one, two } = priceFeed;
+            setTokenTwoAmount(((e.target.value * one) / two).toFixed(6));
+        } else
+            setTokenTwoAmount(null);
     }
 
     const switchToken = () => {
         setTokenOne(tokenTwo);
         setTokenTwo(tokenOne);
+        setTokenOneAmount(tokenTwoAmount)
+        setTokenTwoAmount(tokenOneAmount)
     }
 
     const settingContent = () => {
@@ -42,13 +63,14 @@ function Swap() {
         )
     }
 
-    const openModal = (token) => {
+    const openModal = (token, asset) => {
         setSelectedAsset(token);
+        setAssetChanged(asset)
         setIsOpen(true);
     }
 
     const changeToken = (token) => {
-        if (selectedAsset == 1) {
+        if (assetChanged == 1) {
             if (token == tokenTwo)
                 setTokenTwo(tokenOne);
             setTokenOne(token);
@@ -58,6 +80,8 @@ function Swap() {
             setTokenTwo(token);
         }
         setIsOpen(false);
+        setTokenOneAmount(null)
+        setTokenTwoAmount(null)
     }
 
     return (
@@ -103,12 +127,12 @@ function Swap() {
                     <div className="switchButton" onClick={switchToken}>
                         <ArrowDownOutlined className="switchArrow" />
                     </div>
-                    <div className="asset assetOne" onClick={() => openModal(1)}>
+                    <div className="asset assetOne" onClick={() => openModal(tokenOne, 1)}>
                         <img src={tokenOne.img} className="assetLogo" />
                         {tokenOne.ticker}
                         <DownOutlined />
                     </div>
-                    <div className="asset assetTwo" onClick={() => openModal(2)}>
+                    <div className="asset assetTwo" onClick={() => openModal(tokenTwo, 2)}>
                         <img src={tokenTwo.img} className="assetLogo" />
                         {tokenTwo.ticker}
                         <DownOutlined />

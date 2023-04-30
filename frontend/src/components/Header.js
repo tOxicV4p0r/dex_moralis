@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
-function Header() {
+function Header(props) {
+    const { connect, isConnected, address } = props
     return (
         <header>
             <div className="leftH">
@@ -14,7 +15,14 @@ function Header() {
             </div>
             <div className="rightH">
                 <div>Chain</div>
-                <div>Connect</div>
+                {isConnected ?
+                    <div>
+                        {address.substr(0, 4) + "..." + address.substr(38)}
+                    </div>
+                    :
+                    <div onClick={connect}>Connect</div>
+                }
+
             </div>
         </header>
     )
