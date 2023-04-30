@@ -4,11 +4,12 @@ import './index.css';
 import App from './App';
 import { BrowserRouter } from "react-router-dom";
 import { configureChains, mainnet, WagmiConfig, createClient } from "wagmi";
+import { optimism } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 import reportWebVitals from './reportWebVitals';
 
 const { provider, webSocketProvider } = configureChains(
-  [mainnet],
+  [mainnet, optimism],
   [publicProvider()]
 );
 
